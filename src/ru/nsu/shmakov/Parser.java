@@ -3,9 +3,9 @@ package ru.nsu.shmakov;
 /**
  * Created by Иван on 16.02.2015.
  */
-public class Paarser {
+public class Parser {
 
-    public Paarser(Lexer lexer) {
+    public Parser(Lexer lexer) {
         this.lexer = lexer;
     }
 
@@ -16,17 +16,23 @@ public class Paarser {
 
         while(working) {
             Lexeme lex = lexer.pop();
-            if (LexemeType.END == lex.getLexemeType() || LexemeType.FUNCTION == lex.getLexemeType() && lex.getValue().equals(")")) {
+            if (LexemeType.END == lex.getLexemeType()) {
                 working = false;
             }
             else if(LexemeType.FUNCTION == lex.getLexemeType() && lex.getValue().equals("-")) {
                 result -= parseTerm();
             }
+            else if(LexemeType.FUNCTION == lex.getLexemeType() && lex.getValue().equals(")") && 1 != expressionCounter) {
+                working = false;
+                lexer.goBack();
+                --expressionCounter;
+            }
             else if(LexemeType.FUNCTION == lex.getLexemeType() && lex.getValue().equals("+")) {
                 result += parseTerm();
             }
             else {
-                System.out.println("Cannot parse lexeme.");
+                System.out.print("Cannot parse lexeme: ");
+                System.out.println(lex.getValue());
                 throw new RuntimeException("Invalid lexeme.");
             }
         }
@@ -91,11 +97,12 @@ public class Paarser {
             result = Integer.parseInt(lex.getValue());
         }
         else if (LexemeType.FUNCTION == lex.getLexemeType() && lex.getValue().equals("(")) {
+            ++expressionCounter;
             result = parseExpression();
             lex = lexer.pop();
-            /*if (LexemeType.FUNCTION != lex.getLexemeType() || lex.getValue().equals(")")) {
+            if (LexemeType.FUNCTION != lex.getLexemeType() || !lex.getValue().equals(")")) {
                 throw new RuntimeException("Invalid expression");
-            }*/
+            }
         }
         else {
             throw new RuntimeException("Invalid expression");
@@ -103,6 +110,6 @@ public class Paarser {
 
         return result;
     }
-
+    private int expressionCounter = 1;
     private Lexer lexer;
 }

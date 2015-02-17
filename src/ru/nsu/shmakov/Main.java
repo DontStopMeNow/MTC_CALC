@@ -12,7 +12,7 @@ public class Main {
         }
         l.toStart();
         System.out.println();
-        Paarser p = new Paarser(l);
+        Parser p = new Parser(l);
         System.out.println(p.parseExpression());
     }
 }

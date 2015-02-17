@@ -36,7 +36,7 @@ public class Lexer {
                     break;
 
 
-                case '\0':
+                case '\0':case';':
                     if(isNumber) {
                         lexemes.add(new Lexeme(LexemeType.NUMBER, sb.toString()));
                         sb.setLength(0);
@@ -48,8 +48,8 @@ public class Lexer {
 
 
                 default:
-                    System.out.println("Unknown lexeme");
-                    throw new RuntimeException("Unknown lexeme");
+                    System.out.println("Unknown lexeme.");
+                    throw new RuntimeException("Unknown lexeme.");
             }
         }
         if(!isEnded) {
